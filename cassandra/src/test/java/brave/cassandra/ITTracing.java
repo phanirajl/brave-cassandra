@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 The OpenZipkin Authors
+ * Copyright 2017-2019 The OpenZipkin Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -14,6 +14,7 @@
 package brave.cassandra;
 
 import brave.ScopedSpan;
+import brave.cassandra.driver.CassandraClientTracing;
 import brave.cassandra.driver.TracingSession;
 import brave.propagation.StrictScopeDecorator;
 import brave.propagation.ThreadLocalCurrentTraceContext;
@@ -150,11 +151,13 @@ public class ITTracing {
   }
 
   void executeTraced(Function<Session, Statement> statement) {
+    CassandraClientTracing withPropagation = CassandraClientTracing.newBuilder(tracing)
+        .propagationEnabled(true).build();
     try (Cluster cluster =
             Cluster.builder()
                 .addContactPointsWithPorts(Collections.singleton(cassandra.contactPoint()))
                 .build();
-        Session session = TracingSession.create(tracing, cluster.connect())) {
+        Session session = TracingSession.create(withPropagation, cluster.connect())) {
       session.execute(statement.apply(session));
     }
   }

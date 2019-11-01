@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 The OpenZipkin Authors
+ * Copyright 2017-2019 The OpenZipkin Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -20,8 +20,7 @@ abstract class TracingComponent {
   abstract Tracer tracer();
 
   static final class Current extends TracingComponent {
-    @Override
-    Tracer tracer() {
+    @Override Tracer tracer() {
       return brave.Tracing.currentTracer();
     }
   }
@@ -34,8 +33,7 @@ abstract class TracingComponent {
       this.tracer = tracing.tracer();
     }
 
-    @Override
-    Tracer tracer() {
+    @Override Tracer tracer() {
       return tracer;
     }
   }

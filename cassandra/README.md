@@ -29,7 +29,7 @@ The easiest way to get started is to place this project's "all" jar in
 cassandra's lib directory and start cassandra with java options like this:
 
 ```bash
-$ JVM_OPTS='-Dzipkin.http_endpoint=http://localhost:9411/api/v1/spans -Dcassandra.custom_tracing_class=brave.cassandra.Tracing' cassandra
+$ JVM_OPTS='-Dzipkin.http_endpoint=http://localhost:9411/api/v2/spans -Dcassandra.custom_tracing_class=brave.cassandra.Tracing' cassandra
 ```
 
 Note this jar is about 200KiB and does not include any classes besides
@@ -37,7 +37,7 @@ Brave and Zipkin. It has limited configuration to the below:
 
 System property | Default | Description
 --- | --- | ---
-zipkin.http_endpoint | none | The url to Zipkin's POST endpoint. Ex. http://myhost:9411/api/v1/spans
+zipkin.http_endpoint | none | The url to Zipkin's POST endpoint. Ex. http://myhost:9411/api/v2/spans
 zipkin.service_name | cassandra | The name that shows up in Zipkin's search and dependency graph
 
 ## Custom Integration
@@ -52,10 +52,7 @@ preparedStatement.enableTracing();
 
 // By default, B3 style is used, so instrumented clients do something like this
 Map<String, ByteBuffer> payload = new LinkedHashMap<>();
-payload.set("X-B3-TraceId", byteBuffer("463ac35c9f6413ad"));
-payload.set("X-B3-ParentSpanId", byteBuffer("463ac35c9f6413ad"));
-payload.set("X-B3-SpanId", byteBuffer("72485a3953bb6124"));
-payload.set("X-B3-Sampled", byteBuffer("1"));
+payload.set("b3", byteBuffer("463ac35c9f6413ad-72485a3953bb6124-1-463ac35c9f6413ad"));
 preparedStatement.setOutgoingPayload(payload);
 ```
 
